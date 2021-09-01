@@ -1,13 +1,12 @@
 function calculator(str) {
+  // Separate the str input between nums and operators.
   let nums = [];
   let operators = [];
 
   for (let i = 0; i < str.length; i++) {
-    // skip the spaces
-    if (str[i] === " ") continue;
-    // if input is a letter, return invalid
-    if (str[i].match(/[a-z]/g)) return "Invalid Input";
-    // if the input is a number, or a '-' that indicates negative num (not an operator)
+    if (str[i] === " ") continue; // skip the spaces
+    if (str[i].match(/[a-z]/g)) return "Invalid Input"; // invalid if input is a letter
+    // is the character a number or a '-' that isn't an operator (ie. negative number)
     if (
       str[i].match(/[0-9]/g) ||
       (str[i].match(/[-]/g) &&
@@ -22,22 +21,18 @@ function calculator(str) {
     }
   }
 
-  // if no operator, return the num
-  if (!operators.length) return nums[0];
+  if (!operators.length) return nums[0]; // if no operator, return the num
 
-  // check if brackets match:
-  if (!checkBrackets(operators)) return "Invalid Input";
+  // Checking for invalid inputs:
 
-  // if there are more operators than nums (but no including brackets) OR if open and closing parenthesis don't match:
+  if (!operators.length > 2) return "Invalid Input"; // calculator supports max 2 operators in a series
+
+  if (!checkBrackets(operators)) return "Invalid Input"; // if there are any brackets, check if valid (see function below)
+
   let opsLength = operators
     .filter((op) => op !== "(")
     .filter((op) => op !== ")").length;
-  if (nums.length - opsLength !== 1) return "Invalid Input";
-  if (
-    (operators.includes("(") && !operators.includes(")")) ||
-    (!operators.includes("(") && operators.includes(")"))
-  )
-    return "Error";
+  if (nums.length > opsLength) return "Invalid Input"; // if there are more operators (not including brackets) than nums then it's invalid
 
   // brackets
   while (operators.includes("(")) {
@@ -54,7 +49,6 @@ function calculator(str) {
     } else if (operators[idx + 1] === "(") {
       console.log("nesting brackets"); //////////////// COME BACK TO THIS
     }
-
     nums.splice(idx, 2, result);
     operators.splice(idx, 3);
   }
