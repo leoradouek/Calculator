@@ -1,74 +1,63 @@
-function calculate(str) {
-  let ops = { "+": true, "-": true, "*": true, "/": true };
-  // Separate the str input between nums and operators.
+function calculator(str) {
+  str = str.replace(/\s+/g, ""); // remove whitespaces
+  if (str.match(/[a-z]/g)) return "Invalid Input1";
+
+  // Separate the str input between nums and operators:
   let nums = [];
   let operators = [];
 
   for (let i = 0; i < str.length; i++) {
-    if (str[i] === " ") continue; // skip the spaces
-
-    // Input string is invalid if it 1) includes a letter, 2) has more than 2 operators in a row
+    let char = str[i];
     if (
-      (ops[str[i]] && ops[str[i + 1]] && ops[str[i + 2]]) ||
-      str[i].match(/[a-z]/g)
-    )
-      return "Invalid Input";
-
-    // is the character a number or a '-' that isn't an operator (ie. negative number)
-    //////// NEED TO TAKE INTO ACCOUNT SPACES IN FRONT 1 + 10           -5////////////
-    if (
-      str[i].match(/[0-9]/g) ||
-      i === 0 ||
-      (str[i].match(/[-]/g) &&
-        !str[i - 1].match(/[0-9]/g) &&
-        str[i + 1].match(/[0-9]/g))
+      isNumber(char) ||
+      (char === "-" && i === 0) ||
+      (char === "-" && isOperator(str[i - 1]) && isNumber(str[i + 1]))
     ) {
       let currentNum = parseFloat(str.slice(i)); // include the whole num, not just the first digit
       nums.push(currentNum);
       i += currentNum.toString().length - 1; // skip to the end of the num
+    } else if (isOperator(char)) {
+      operators.push(char);
     } else {
-      operators.push(str[i]);
+      return "Invalid Input2"; // invalid if includes character that is not a number of operator (eg. a letter)
     }
   }
-  console.log(nums, operators);
-  if (!operators.length && nums.length === 1) return nums[0]; // if no operator, return the num (but also check that user didn't input eg. 9 8 8 7)
-
-  // Checking for invalid inputs:
-
-  if (!checkBrackets(operators)) return "Invalid Input"; // if there are any brackets, check if valid (see function below)
-
+  // Check for invalid inputs: 1. no operators, 2. more operators than numbers, 3. unbalanced brackets
+  if (!operators.length && !checkBrackets(operators)) return "Invalid Input3";
   let opsLength = operators
     .filter((op) => op !== "(")
     .filter((op) => op !== ")").length;
-  if (nums.length <= opsLength) return "Invalid Input"; // invalid if more operators than numbers
+  if (nums.length <= opsLength) return "Invalid Input4"; // invalid if more operators than numbers
 
-  // brackets
-  while (operators.includes("(")) {
-    console.log("here");
-    let idx = operators.indexOf("(");
-    let result = 0;
+  recursiveBrackets(nums, operators);
 
-    if (operators[idx + 1] === ")") {
-      // if there is only a single number within the brackets (eg. 1+(9))
-      result = nums[idx];
-      operators.splice(idx, 2);
-      continue;
+  return nums[0];
+}
+
+function recursiveBrackets(nums, operators) {
+  console.log(nums, operators);
+  if (!operators.includes("(")) return calculate(nums, operators);
+
+  for (let i = operators.length - 1; i >= 0; i--) {
+    let op = operators[i];
+    let openingIdx = null;
+    let closingIdx = null;
+    if (op === ")") closingIdx = i;
+    if (op === "(") {
+      openingIdx = i;
+      closingIdx = operators.indexOf(")");
+      let numsSlice = nums.slice(openingIdx, closingIdx + 1);
+      let opsSlice = operators.slice(openingIdx + 1, closingIdx);
+      let subExpression = calculate(numsSlice, opsSlice);
+      nums.splice(openingIdx, closingIdx, subExpression);
+      operators.splice(openingIdx, closingIdx);
+      recursiveBrackets(nums, operators);
     }
-
-    if (operators[idx + 1] === "*") {
-      result = nums[idx] * nums[idx + 1];
-    } else if (operators[idx + 1] === "/") {
-      result = nums[idx + 1] / nums[idx + 1];
-    } else if (operators[idx + 1] === "+") {
-      result = nums[idx] + nums[idx + 1];
-    } else if (operators[idx + 1] === "-") {
-      result = nums[idx] - nums[idx + 1];
-    } else if (operators[idx + 1] === "(") {
-      console.log("nesting brackets"); //////////////// COME BACK TO THIS
-    }
-    nums.splice(idx, 2, result); // remove the two numbers and replace with the result
-    operators.splice(idx, 3); // remove the brackets and the operator
   }
+  return calculate(nums, operators);
+}
+
+function calculate(nums, operators) {
   while (operators.includes("/")) {
     let idx = operators.indexOf("/");
     let result = nums[idx] / nums[idx + 1];
@@ -90,7 +79,6 @@ function calculate(str) {
     operators.splice(idx, 1);
   }
 
-  console.log(nums, operators);
   while (operators.includes("+")) {
     let idx = operators.indexOf("+");
     let result = nums[idx] + nums[idx + 1];
@@ -98,13 +86,19 @@ function calculate(str) {
     operators.splice(idx, 1);
   }
 
-  console.log(nums, operators);
-
-  if (nums.length > 1) return "Invalid Input";
-
   return nums[0];
 }
+// Checks if character is a number
+function isNumber(character) {
+  return character.match(/[0-9]/g) !== null;
+}
 
+// Checks if characters is an operator
+function isOperator(character) {
+  return character.match(/[-+/*()]/g) !== null;
+}
+
+// Checks for balanced brackets
 function checkBrackets(operators) {
   let brackets = [];
   for (let i = 0; i < operators.length; i++) {
@@ -118,26 +112,4 @@ function checkBrackets(operators) {
   return true;
 }
 
-function nestedBrackets(nums, operators) {
-  if (operators.includes("(")) {
-    let idx = operators.indexOf("(");
-    let result = 0;
-    if (operators[idx] === "*") {
-      result = nums[idx] * nums[idx + 1];
-    } else if (operators[idx + 1] === "/") {
-      result = nums[idx + 1] / nums[idx + 1];
-    } else if (operators[idx + 1] === "+") {
-      result = nums[idx] + nums[idx + 1];
-    } else if (operators[idx + 1] === "-") {
-      result = nums[idx] - nums[idx + 1];
-    } else if (operators[idx + 1] === "(") {
-      operators.splice(idx + 2, 1);
-      operators.splice(idx, 1);
-      nestedBrackets(nums, operators);
-    }
-    nums.splice(idx, 2, result);
-    operators.splice(idx, 3);
-  }
-}
-
-export default calculate;
+export default calculator;

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import calculate from "../CalcFunc";
+import calculator from "../CalcFunc";
 import CalculatorDisplay from "./CalculatorDisplay";
 import "./Calculator.css";
 
@@ -11,7 +11,7 @@ const Calculator = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    let total = calculate(expression);
+    let total = calculator(expression);
     setExpression("");
     setResult(total);
   };
