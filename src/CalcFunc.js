@@ -29,8 +29,8 @@ function calculate(str) {
       operators.push(str[i]);
     }
   }
-
-  if (!operators.length) return nums[0]; // if no operator, return the num
+  console.log(nums, operators);
+  if (!operators.length && nums.length === 1) return nums[0]; // if no operator, return the num (but also check that user didn't input eg. 9 8 8 7)
 
   // Checking for invalid inputs:
 
@@ -39,13 +39,21 @@ function calculate(str) {
   let opsLength = operators
     .filter((op) => op !== "(")
     .filter((op) => op !== ")").length;
-  if (nums.length <= opsLength || opsLength > 2) return "Invalid Input"; // invalid if more operators than numbers, or if more than 2 operators
+  if (nums.length <= opsLength) return "Invalid Input"; // invalid if more operators than numbers
 
   // brackets
   while (operators.includes("(")) {
     let idx = operators.indexOf("(");
     let result = 0;
-    if (operators[idx] === "*") {
+
+    if (operators[idx + 1] === ")") {
+      // if there is only a single number within the brackets (eg. 1+(9))
+      result = nums[idx];
+      operators.splice(idx, 2);
+      continue;
+    }
+
+    if (operators[idx + 1] === "*") {
       result = nums[idx] * nums[idx + 1];
     } else if (operators[idx + 1] === "/") {
       result = nums[idx + 1] / nums[idx + 1];
@@ -88,7 +96,8 @@ function calculate(str) {
     operators.splice(idx, 1);
   }
 
-  if (nums.length > 1) return "Error";
+  if (nums.length > 1) return "Invalid Input";
+
   return nums[0];
 }
 
