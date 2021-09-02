@@ -1,4 +1,4 @@
-function calculator(str) {
+function calculate(str) {
   let ops = { "+": true, "-": true, "*": true, "/": true };
   // Separate the str input between nums and operators.
   let nums = [];
@@ -127,4 +127,4 @@ function nestedBrackets(nums, operators) {
   }
 }
 
-export default calculator;
+export default calculate;
