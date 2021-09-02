@@ -15,6 +15,7 @@ function calculate(str) {
       return "Invalid Input";
 
     // is the character a number or a '-' that isn't an operator (ie. negative number)
+    //////// NEED TO TAKE INTO ACCOUNT SPACES IN FRONT 1 + 10           -5////////////
     if (
       str[i].match(/[0-9]/g) ||
       i === 0 ||
@@ -43,6 +44,7 @@ function calculate(str) {
 
   // brackets
   while (operators.includes("(")) {
+    console.log("here");
     let idx = operators.indexOf("(");
     let result = 0;
 
@@ -67,14 +69,6 @@ function calculate(str) {
     nums.splice(idx, 2, result); // remove the two numbers and replace with the result
     operators.splice(idx, 3); // remove the brackets and the operator
   }
-
-  while (operators.includes("*")) {
-    let idx = operators.indexOf("*");
-    let result = nums[idx] * nums[idx + 1];
-    nums.splice(idx, 2, result);
-    operators.splice(idx, 1);
-  }
-
   while (operators.includes("/")) {
     let idx = operators.indexOf("/");
     let result = nums[idx] / nums[idx + 1];
@@ -82,9 +76,9 @@ function calculate(str) {
     operators.splice(idx, 1);
   }
 
-  while (operators.includes("+")) {
-    let idx = operators.indexOf("+");
-    let result = nums[idx] + nums[idx + 1];
+  while (operators.includes("*")) {
+    let idx = operators.indexOf("*");
+    let result = nums[idx] * nums[idx + 1];
     nums.splice(idx, 2, result);
     operators.splice(idx, 1);
   }
@@ -95,6 +89,16 @@ function calculate(str) {
     nums.splice(idx, 2, result);
     operators.splice(idx, 1);
   }
+
+  console.log(nums, operators);
+  while (operators.includes("+")) {
+    let idx = operators.indexOf("+");
+    let result = nums[idx] + nums[idx + 1];
+    nums.splice(idx, 2, result);
+    operators.splice(idx, 1);
+  }
+
+  console.log(nums, operators);
 
   if (nums.length > 1) return "Invalid Input";
 

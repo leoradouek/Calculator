@@ -1,5 +1,5 @@
 import { useState } from "react";
-import calculate from "./CalcFunc";
+import calculate from "../CalcFunc";
 import CalculatorDisplay from "./CalculatorDisplay";
 import "./Calculator.css";
 
