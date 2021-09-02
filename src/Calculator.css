@@ -1,11 +1,15 @@
+#main-calc-container {
+  display: flex;
+}
 .calculator-container {
   background-color: #1d3849;
   margin: 0 auto;
   margin-top: 50px;
+  margin-bottom: 50px;
   border-radius: 20px;
   padding: 20px;
   width: 400px;
-  box-shadow: 0px 10px 10px 5px lightgray;
+  box-shadow: 5px 5px 5px 0px rgb(133, 133, 133);
 }
 
 input {
@@ -16,7 +20,6 @@ input {
   padding-right: 12px;
   width: 95%;
   height: 60px;
-  border-bottom: 2px solid #111;
   color: #072a3d;
   text-align: right;
   font-size: 30px;
@@ -29,7 +32,7 @@ input {
   grid-template-columns: 1fr 1fr 1fr 1fr;
 }
 
-.calculator-button {
+.calc-button {
   border: none;
   background: #205b7a;
   padding: 20px;
@@ -37,26 +40,26 @@ input {
   color: white;
   border-radius: 80px;
   font-size: 22px;
-  cursor: pointer; /* make it look clickable */
+  cursor: pointer;
 }
 
-.calculator-button:hover {
+.calc-button:hover {
   background-color: #3e7ea0;
 }
 
-.calculator-button:active {
+.calc-button:active {
   background-color: #64a1c2;
 }
 
-.operator {
+.op {
   background-color: #a2bbcf;
 }
 
-.operator:hover {
+.op:hover {
   background-color: #c3d3e0;
 }
 
-.operator:active {
+.op:active {
   background-color: #dbe5ec;
 }
 
@@ -73,4 +76,8 @@ input {
 }
 .zero {
   grid-column: span 2;
+}
+
+button {
+  font-family: "Questrial";
 }

@@ -3,140 +3,107 @@ import calculator from "./CalcFunc";
 import "./Calculator.css";
 
 const Calculator = () => {
-  // const [result, setResult] = useState("");
   const [expression, setExpression] = useState("");
-  const [clear, setClear] = useState(false);
+  const [result, setResult] = useState(" "); // set as whitespace (rather than empty string) bc had trouble displaying result of 0 otherwise
+
+  const displayValue = expression ? expression : result;
 
   const handleSubmit = (e) => {
-    e.preventDefault(); // prevents page from refreshing when clicking submit
-
-    let sum = calculator(expression);
-    // setResult(sum);
-    setExpression(sum);
-    setClear(true); // if user clicks '=', then the next number should clear and start again
-  };
-
-  const handleClick = (e) => {
     e.preventDefault();
-    if (clear) {
-      // if user just summed the expression, then clear what's there and start again
-      setExpression(e.target.value);
-      setClear(false);
-    } else {
-      setExpression(expression + e.target.value);
-    }
+    let total = calculator(expression);
+    setExpression("");
+    setResult(total);
   };
 
-  const handleClear = (e) => {
+  const handleButton = (e) => {
+    e.preventDefault();
+    if (result !== " ") {
+      setResult(" "); // set to empty string so that it will switch to displaying the expression in the input field
+    }
+    setExpression(expression + e.target.value);
+  };
+
+  const handleInputChange = (e) => {
+    result !== " " ? setResult(" ") : setExpression(e.target.value);
+  };
+
+  const handleClear = () => {
     setExpression("");
+    setResult(" ");
   };
 
   return (
-    <div>
+    <div id="main-calc-container">
+      <div id="explanation">
+        <p>Enter here</p>
+        <p>Or click the buttons</p>
+      </div>
       <div className="calculator-container">
-        {/* <form onSubmit={handleSubmit}>
-          <div className="form-container">
-            <input
-              required
-              type="text"
-              name="word"
-              value={expression}
-              onChange={(e) => setExpression(e.target.value)} // to keep track of value that is entered and store in state
-            />
-          </div>
-        </form> */}
         <form onSubmit={handleSubmit}>
           <input
-            onChange={(e) => setExpression(e.target.value)} // to allow user to type in input box directly
+            onChange={handleInputChange}
             type="text"
-            value={expression}
+            value={displayValue}
+            autoFocus
           ></input>
         </form>
 
         <div className="button-container">
-          <button onClick={handleClear} className="calculator-button clear">
+          <button onClick={handleClear} className="calc-button clear">
             clear
           </button>
-          <button
-            onClick={handleClick}
-            value="("
-            className="calculator-button operator"
-          >
+          <button onClick={handleButton} value="(" className="calc-button op">
             (
           </button>
-          <button
-            onClick={handleClick}
-            value=")"
-            className="calculator-button operator"
-          >
+          <button onClick={handleButton} value=")" className="calc-button op">
             )
           </button>
-          <button
-            onClick={handleClick}
-            value="/"
-            className="calculator-button operator"
-          >
+          <button onClick={handleButton} value="/" className="calc-button op">
             /
           </button>
-          <button onClick={handleClick} value="7" className="calculator-button">
+          <button onClick={handleButton} value="7" className="calc-button">
             7
           </button>
-          <button onClick={handleClick} value="8" className="calculator-button">
+          <button onClick={handleButton} value="8" className="calc-button">
             8
           </button>
-          <button onClick={handleClick} value="9" className="calculator-button">
+          <button onClick={handleButton} value="9" className="calc-button">
             9
           </button>
-          <button
-            onClick={handleClick}
-            value="*"
-            className="calculator-button operator "
-          >
-            x
+          <button onClick={handleButton} value="*" className="calc-button op ">
+            *
           </button>
-          <button onClick={handleClick} value="4" className="calculator-button">
+          <button onClick={handleButton} value="4" className="calc-button">
             4
           </button>
-          <button onClick={handleClick} value="5" className="calculator-button">
+          <button onClick={handleButton} value="5" className="calc-button">
             5
           </button>
-          <button onClick={handleClick} value="6" className="calculator-button">
+          <button onClick={handleButton} value="6" className="calc-button">
             6
           </button>
-          <button
-            onClick={handleClick}
-            value="-"
-            className="calculator-button operator"
-          >
+          <button onClick={handleButton} value="-" className="calc-button op">
             -
           </button>
-          <button onClick={handleClick} value="1" className="calculator-button">
+          <button onClick={handleButton} value="1" className="calc-button">
             1
           </button>
-          <button onClick={handleClick} value="2" className="calculator-button">
+          <button onClick={handleButton} value="2" className="calc-button">
             2
           </button>
-          <button onClick={handleClick} value="3" className="calculator-button">
+          <button onClick={handleButton} value="3" className="calc-button">
             3
           </button>
-          <button
-            onClick={handleClick}
-            value="+"
-            className="calculator-button operator"
-          >
+          <button onClick={handleButton} value="+" className="calc-button op">
             +
           </button>
-          <button
-            onClick={handleClick}
-            value="0"
-            className="calculator-button zero"
-          >
+          <button onClick={handleButton} value="0" className="calc-button zero">
             0
           </button>
-          <button onClick={handleClick} value="." className="calculator-button">
+          <button onClick={handleButton} value="." className="calc-button">
             .
           </button>
-          <button onClick={handleSubmit} className="calculator-button operator">
+          <button onClick={handleSubmit} className="calc-button op">
             =
           </button>
         </div>

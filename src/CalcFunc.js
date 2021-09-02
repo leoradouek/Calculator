@@ -1,14 +1,23 @@
 function calculator(str) {
+  let ops = { "+": true, "-": true, "*": true, "/": true };
   // Separate the str input between nums and operators.
   let nums = [];
   let operators = [];
 
   for (let i = 0; i < str.length; i++) {
     if (str[i] === " ") continue; // skip the spaces
-    if (str[i].match(/[a-z]/g)) return "Invalid Input"; // invalid if input is a letter
+
+    // Input string is invalid if it 1) includes a letter, 2) has more than 2 operators in a row
+    if (
+      (ops[str[i]] && ops[str[i + 1]] && ops[str[i + 2]]) ||
+      str[i].match(/[a-z]/g)
+    )
+      return "Invalid Input";
+
     // is the character a number or a '-' that isn't an operator (ie. negative number)
     if (
       str[i].match(/[0-9]/g) ||
+      i === 0 ||
       (str[i].match(/[-]/g) &&
         !str[i - 1].match(/[0-9]/g) &&
         str[i + 1].match(/[0-9]/g))
@@ -25,14 +34,12 @@ function calculator(str) {
 
   // Checking for invalid inputs:
 
-  if (!operators.length > 2) return "Invalid Input"; // calculator supports max 2 operators in a series
-
   if (!checkBrackets(operators)) return "Invalid Input"; // if there are any brackets, check if valid (see function below)
 
   let opsLength = operators
     .filter((op) => op !== "(")
     .filter((op) => op !== ")").length;
-  if (nums.length > opsLength) return "Invalid Input"; // if there are more operators (not including brackets) than nums then it's invalid
+  if (nums.length <= opsLength || opsLength > 2) return "Invalid Input"; // invalid if more operators than numbers, or if more than 2 operators
 
   // brackets
   while (operators.includes("(")) {
@@ -49,8 +56,8 @@ function calculator(str) {
     } else if (operators[idx + 1] === "(") {
       console.log("nesting brackets"); //////////////// COME BACK TO THIS
     }
-    nums.splice(idx, 2, result);
-    operators.splice(idx, 3);
+    nums.splice(idx, 2, result); // remove the two numbers and replace with the result
+    operators.splice(idx, 3); // remove the brackets and the operator
   }
 
   while (operators.includes("*")) {
