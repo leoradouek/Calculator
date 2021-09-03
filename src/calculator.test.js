@@ -53,10 +53,10 @@ test("can accept long expressions", () => {
   expect(calculate("100*8+1-1+9/2-5+100+2-1*2/2")).toEqual(900.5);
 });
 
-test("can accepts brackets", () => {
-  expect(calculate("3*(2+5)")).toEqual(21);
-  expect(calculate("100/(4+1)*(4+1)")).toEqual(100);
-});
+// test("can accepts brackets", () => {
+//   expect(calculate("3*(2+5)")).toEqual(21);
+//   expect(calculate("100/(4+1)*(4+1)")).toEqual(100);
+// });
 
 test("supports negative numbers in the beginning and middle of the expression", () => {
   expect(calculate("3--2")).toEqual(5);
