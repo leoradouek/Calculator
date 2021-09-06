@@ -53,19 +53,23 @@ test("can accept long expressions", () => {
   expect(calculate("100*8+1-1+9/2-5+100+2-1*2/2")).toEqual(900.5);
 });
 
-// test("can accepts brackets", () => {
-//   expect(calculate("3*(2+5)")).toEqual(21);
-//   expect(calculate("100/(4+1)*(4+1)")).toEqual(100);
-// });
+test("can accepts brackets", () => {
+  expect(calculate("3*(2+5)")).toEqual(21);
+  expect(calculate("100/(4+1)*(4+1)")).toEqual(100);
+});
 
 test("supports negative numbers in the beginning and middle of the expression", () => {
   expect(calculate("3--2")).toEqual(5);
   expect(calculate("-4+7")).toEqual(3);
 });
 
-test("fails when more than 2 operators in a series", () => {
+test("fails when more than 1 operator in a series, unless it is a negative preceeded by an operator", () => {
   expect(calculate("3*+-10")).toEqual("Invalid Input");
   expect(calculate("9+++10")).toEqual("Invalid Input");
+  expect(calculate("9++10")).toEqual("Invalid Input");
+  expect(calculate("9--10")).toEqual(19);
+  expect(calculate("9*-10")).toEqual(-90);
+  expect(calculate("9-+10")).toEqual("Invalid Input");
 });
 
 test("fails when second operator in a series isn't a minus", () => {
