@@ -1,4 +1,5 @@
-* {
+body {
+  background-color: #e8c031;
   font-family: "Questrial";
 }
 
@@ -75,6 +76,7 @@ input {
 .clear:active {
   background-color: #f0f4f8;
 }
+
 .zero {
   grid-column: span 2;
 }

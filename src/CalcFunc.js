@@ -1,71 +1,107 @@
 function calculator(str) {
-  str = str.replace(/\s+/g, ""); // remove whitespaces
+  let operators = {
+    "+": true,
+    "-": true,
+    "/": true,
+    "*": true,
+  };
 
-  if (!checkBrackets(str)) return "Invalid Input"; // invalid if brackets aren't balanced
+  let brackets = {
+    "(": true,
+    ")": true,
+  };
 
-  return calculate(str);
+  if (!checkBrackets(str)) return "Syntax Error"; // invalid if brackets aren't balanced (see helper function below)
 
-  function calculate(str) {
-    let num = 0;
-    let stack = []; // create a stack to store nums
+  // if there is a decimal point without an integer before (eg. .2) add a zero before it
+  let array = str.split("");
+  for (let i = 0; i < array.length; i++) {
+    if (array[i] === "." && isNaN(array[i - 1])) {
+      array[i] = "0.";
+    }
+  }
+  str = array.join("");
+
+  //convert str to array:
+  let arr = [];
+  for (let i = 0; i < str.length; i++) {
+    let char = str[i];
+    if (char === " ") continue;
+
+    if (
+      // if number or '-' associated with negative number
+      !isNaN(char) ||
+      (char === "-" &&
+        (i === 0 || (operators[str[i - 1]] && !isNaN(str[i + 1]))))
+    ) {
+      // if previous char is a number:
+      if (!isNaN(arr[arr.length - 1])) return "Syntax Error";
+
+      let num = parseFloat(str.slice(i)); // include the whole num, not just the first digit
+      arr.push(num);
+      i += num.toString().length - 1; // skip to the end of the num
+    } else if (brackets[char]) {
+      arr.push(char);
+    } else if (operators[char]) {
+      // if 2 or more operators in a row it is invalid (exception: '-' associated with neg number, already taken into account above)
+      if (operators[arr[arr.length - 1]]) return "Syntax Error";
+      arr.push(char);
+    } else {
+      return "Invalid Input";
+    }
+  }
+
+  // if expression starts or ends with an operator it is invalid
+  if (operators[arr[0]] || operators[arr[arr.length - 1]])
+    return "Syntax Error";
+
+  return calculate(arr);
+
+  function calculate(arr) {
+    let num = null;
+    let stack = [];
     let operator = "+";
 
-    for (let i = 0; i < str.length; i++) {
-      let char = str[i];
+    for (let i = 0; i < arr.length; i++) {
+      let char = arr[i];
 
-      // check if invalid char (eg. letter)
-      if (!isOperator(char) && !isNumber(char) && char !== "(" && char !== ")")
-        return "Invalid Input";
-
-      // if char is a number or '-' associated with negative number
-      if (
-        isNumber(char) ||
-        (char === "-" && i === 0) ||
-        (char === "-" && isOperator(str[i - 1]) && isNumber(str[i + 1]))
-      ) {
-        num = parseFloat(str.slice(i)); // include the whole num, not just the first digit
-        i += num.toString().length - 1; // skip to the end of the num
-      } else if (isOperator(char)) {
-        if (isOperator(str[i - 1])) return "Invalid Input"; // cannot have 2 operators in a row (can have with negative but already took care of it)
-      }
-
-      // if char is operator or bracket
-      if (isNaN(char) || i === str.length - 1) {
-        if (str[i] === "(") {
+      if (!isNaN(char)) {
+        num = char;
+      } else {
+        if (arr[i] === "(") {
           // need to find closing bracket, while taking into account that there can be brackets nested within
           let openingIdx = i;
           let completed = 0;
           while (i < str.length) {
-            if (str[i] === "(") completed++;
-            if (str[i] === ")") completed--;
+            if (arr[i] === "(") completed++;
+            if (arr[i] === ")") completed--;
             if (completed === 0) break;
             i++;
           }
           let closingIdx = i;
-          let innerStr = str.substring(openingIdx + 1, closingIdx);
-          num = calculate(innerStr);
-        }
+          let innerArr = arr.slice(openingIdx + 1, closingIdx);
 
-        // to support order of operations: process multiplication and division as we go, waiting until the end to process addition and subtra
+          // calculate result of inner expression and store it as num
+          num = calculate(innerArr);
+        } else {
+          operator = char;
+        }
+      }
+
+      if (num !== null) {
+        // to take order of operations into account: process multiplication and division right away
         if (operator === "-") {
           stack.push(-num);
-        }
-
-        if (operator === "+") {
+        } else if (operator === "+") {
           stack.push(num);
-        }
-
-        if (operator === "*") {
+        } else if (operator === "*") {
           stack.push(stack.pop() * num);
-        }
-
-        if (operator === "/") {
+        } else if (operator === "/") {
           stack.push(stack.pop() / num);
         }
-        // reset:
-        num = 0;
-        operator = char;
       }
+
+      num = null; // reset num to null
     }
 
     return stack.reduce((total, num) => {
@@ -74,18 +110,7 @@ function calculator(str) {
   }
 }
 
-// Helper Functions:
-// Checks if character is a number
-function isNumber(character) {
-  return character.match(/[0-9]/g) !== null;
-}
-
-// Checks if characters is an operator
-function isOperator(character) {
-  return character.match(/[-+/*]/g) !== null;
-}
-
-// Checks if brackets are balanced
+// Helper function - checks if brackets are balanced
 function checkBrackets(str) {
   let brackets = [];
   for (let i = 0; i < str.length; i++) {

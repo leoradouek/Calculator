@@ -1,8 +1,9 @@
+// import "@testing-library/jest-dom";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
 import App from "./App";
-import calculate from "./CalcFunc";
+import calculate from "./calcFunc";
 
 test("renders the correct content", () => {
   const root = document.createElement("div");
@@ -48,6 +49,11 @@ test("can add, subtract, multiply and divide decimal numbers", () => {
   expect(calculate("10.5/3")).toEqual(3.5);
 });
 
+test("support decimals without an integer before the decimal point", () => {
+  expect(calculate(".2+1")).toEqual(1.2);
+  expect(calculate("2*.4")).toEqual(0.8);
+});
+
 test("can accept long expressions", () => {
   expect(calculate("1-2+5+5.5-4+9-10+100-86-1+2")).toEqual(19.5);
   expect(calculate("100*8+1-1+9/2-5+100+2-1*2/2")).toEqual(900.5);
@@ -61,27 +67,29 @@ test("can accepts brackets", () => {
 test("supports negative numbers in the beginning and middle of the expression", () => {
   expect(calculate("3--2")).toEqual(5);
   expect(calculate("-4+7")).toEqual(3);
+  expect(calculate("-3*2")).toEqual(-6);
+  expect(calculate("-4/2")).toEqual(-2);
 });
 
 test("fails when more than 1 operator in a series, unless it is a negative preceeded by an operator", () => {
-  expect(calculate("3*+-10")).toEqual("Invalid Input");
-  expect(calculate("9+++10")).toEqual("Invalid Input");
-  expect(calculate("9++10")).toEqual("Invalid Input");
+  expect(calculate("3*+-10")).toEqual("Syntax Error");
+  expect(calculate("9+++10")).toEqual("Syntax Error");
+  expect(calculate("9++10")).toEqual("Syntax Error");
   expect(calculate("9--10")).toEqual(19);
   expect(calculate("9*-10")).toEqual(-90);
-  expect(calculate("9-+10")).toEqual("Invalid Input");
+  expect(calculate("9-+10")).toEqual("Syntax Error");
 });
 
 test("fails when second operator in a series isn't a minus", () => {
-  expect(calculate("3-+2")).toEqual("Invalid Input");
-  expect(calculate("4++2")).toEqual("Invalid Input");
-  expect(calculate("3//7")).toEqual("Invalid Input");
-  expect(calculate("7+2+*19")).toEqual("Invalid Input");
+  expect(calculate("3-+2")).toEqual("Syntax Error");
+  expect(calculate("4++2")).toEqual("Syntax Error");
+  expect(calculate("3//7")).toEqual("Syntax Error");
+  expect(calculate("7+2+*19")).toEqual("Syntax Error");
 });
 
 test("fails when brackets are not balanced", () => {
-  expect(calculate("1+(3-9")).toEqual("Invalid Input");
-  expect(calculate("3-9)")).toEqual("Invalid Input");
+  expect(calculate("1+(3-9")).toEqual("Syntax Error");
+  expect(calculate("3-9)")).toEqual("Syntax Error");
 });
 
 test("fails when input includes invalid characters", () => {
@@ -91,8 +99,5 @@ test("fails when input includes invalid characters", () => {
 
 test("supports spaces in the input", () => {
   expect(calculate("9 +       8")).toEqual(17);
-  //expect(calculate("10      -1+2")).toEqual(11);
+  expect(calculate("10      -1+2")).toEqual(11);
 });
-
-// expect(calculate("+10-9")).toEqual("Invalid Input");
-//expect(calculate("10-9+")).toEqual("Invalid Input");

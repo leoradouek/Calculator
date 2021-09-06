@@ -1,11 +1,11 @@
 import { useState } from "react";
-import calculator from "../CalcFunc";
+import calculator from "../calcFunc";
 import CalculatorDisplay from "./CalculatorDisplay";
 import "./Calculator.css";
 
 const Calculator = () => {
   const [expression, setExpression] = useState("");
-  const [result, setResult] = useState(" "); // set as whitespace (rather than empty string) bc had trouble displaying result of 0 otherwise
+  const [result, setResult] = useState(" "); // set as whitespace (rather than empty string) so that result of 0 will display
 
   const displayValue = expression ? expression : result;
 
