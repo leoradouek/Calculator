@@ -1,6 +1,8 @@
 ### Description
 
-#### A calculator application that allows a user enter a math problem as a string and get an answer
+#### A calculator application that allows a user enter a math problem as a string and get an answer.
+
+The calculator supports addition, subtraction, multiplication, division and brackets.
 
 ### To Start
 
